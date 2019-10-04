@@ -1,0 +1,78 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!687078895 &4343727234628468602
+SpriteAtlas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Spades
+  m_EditorData:
+    serializedVersion: 2
+    textureSettings:
+      serializedVersion: 2
+      anisoLevel: 1
+      compressionQuality: 50
+      maxTextureSize: 2048
+      textureCompression: 0
+      filterMode: 1
+      generateMipMaps: 0
+      readable: 0
+      crunchedCompression: 0
+      sRGB: 1
+    platformSettings: []
+    packingSettings:
+      serializedVersion: 2
+      padding: 4
+      blockOffset: 1
+      allowAlphaSplitting: 0
+      enableRotation: 1
+      enableTightPacking: 1
+    variantMultiplier: 1
+    packables:
+    - {fileID: 2800000, guid: 55d56270176b01249aec06fdd8736afd, type: 3}
+    - {fileID: 2800000, guid: 9bd1394cf4bc30d44a30da4375812156, type: 3}
+    - {fileID: 2800000, guid: 61c9f22743bb9304da9e929afb3f041a, type: 3}
+    - {fileID: 2800000, guid: c2d3bac00d7848045bbea02edd0a1119, type: 3}
+    - {fileID: 2800000, guid: 775036939637e3849b463ee2c2bd0f8d, type: 3}
+    - {fileID: 2800000, guid: 1832896f2d4c67c498f4385d50ed27fb, type: 3}
+    - {fileID: 2800000, guid: 5d868ff445d3a954fb1f6b3d94cea065, type: 3}
+    - {fileID: 2800000, guid: a3735ee86deca9f4ea6982d73c44b271, type: 3}
+    - {fileID: 2800000, guid: b6fdf0da8b2132b49a0cadd63112d8ed, type: 3}
+    - {fileID: 2800000, guid: 5c5647e5c69c237498c62e8b0daab391, type: 3}
+    - {fileID: 2800000, guid: f9e6ad8afff1bae46be106f6a88a0f2d, type: 3}
+    - {fileID: 2800000, guid: 6233829c8bdd60343865fe4714879f93, type: 3}
+    - {fileID: 2800000, guid: 28e2174ab77dd3242be5ca817c80cf19, type: 3}
+    totalSpriteSurfaceArea: 345800
+    bindAsDefault: 1
+  m_MasterAtlas: {fileID: 0}
+  m_PackedSprites:
+  - {fileID: 21300000, guid: 55d56270176b01249aec06fdd8736afd, type: 3}
+  - {fileID: 21300000, guid: c2d3bac00d7848045bbea02edd0a1119, type: 3}
+  - {fileID: 21300000, guid: 775036939637e3849b463ee2c2bd0f8d, type: 3}
+  - {fileID: 21300000, guid: 5d868ff445d3a954fb1f6b3d94cea065, type: 3}
+  - {fileID: 21300000, guid: 5c5647e5c69c237498c62e8b0daab391, type: 3}
+  - {fileID: 21300000, guid: 61c9f22743bb9304da9e929afb3f041a, type: 3}
+  - {fileID: 21300000, guid: a3735ee86deca9f4ea6982d73c44b271, type: 3}
+  - {fileID: 21300000, guid: 28e2174ab77dd3242be5ca817c80cf19, type: 3}
+  - {fileID: 21300000, guid: f9e6ad8afff1bae46be106f6a88a0f2d, type: 3}
+  - {fileID: 21300000, guid: b6fdf0da8b2132b49a0cadd63112d8ed, type: 3}
+  - {fileID: 21300000, guid: 9bd1394cf4bc30d44a30da4375812156, type: 3}
+  - {fileID: 21300000, guid: 6233829c8bdd60343865fe4714879f93, type: 3}
+  - {fileID: 21300000, guid: 1832896f2d4c67c498f4385d50ed27fb, type: 3}
+  m_PackedSpriteNamesToIndex:
+  - cardSpades2
+  - cardSpades5
+  - cardSpades6
+  - cardSpades8
+  - cardSpadesJ
+  - cardSpades4
+  - cardSpades9
+  - cardSpadesA
+  - cardSpadesQ
+  - cardSpades10
+  - cardSpades3
+  - cardSpadesK
+  - cardSpades7
+  m_Tag: Spades
+  m_IsVariant: 0
