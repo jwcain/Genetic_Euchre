@@ -15,7 +15,7 @@ MonoBehaviour:
   Path: event:/cardSlide1
   guid: 6bb363dd2514a944b17e4ad26135e976
   Banks:
-  - {fileID: 9032570641646618640}
+  - {fileID: -1229090403119728758}
   IsStream: 0
   Is3D: 0
   IsOneShot: 1
@@ -38,7 +38,7 @@ MonoBehaviour:
   Path: event:/cardPlace3
   guid: a7b6f9389f139b49b60cea70de706ab9
   Banks:
-  - {fileID: 9032570641646618640}
+  - {fileID: -1229090403119728758}
   IsStream: 0
   Is3D: 0
   IsOneShot: 1
@@ -61,7 +61,7 @@ MonoBehaviour:
   Path: event:/cardSlide2
   guid: 4d04594301f5d64f822315935b22ae42
   Banks:
-  - {fileID: 9032570641646618640}
+  - {fileID: -1229090403119728758}
   IsStream: 0
   Is3D: 0
   IsOneShot: 1
@@ -84,7 +84,7 @@ MonoBehaviour:
   Path: event:/cardSlide3
   guid: f9b203e3f558d54eb532c206b3bd8ef0
   Banks:
-  - {fileID: 9032570641646618640}
+  - {fileID: -1229090403119728758}
   IsStream: 0
   Is3D: 0
   IsOneShot: 1
@@ -92,6 +92,26 @@ MonoBehaviour:
   MinDistance: 0
   MaxDistance: 0
   Length: 636
+--- !u!114 &-1229090403119728758
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
+  m_Name: bank:/Master.bank
+  m_EditorClassIdentifier: 
+  Path: D:/UnityProjects/Genetic_Euchre/Assets/Audio/FMOD/Euchre/Build/Desktop/Master.bank
+  SubDir: 
+  lastModified: 637057427018401526
+  LoadResult: 0
+  FileSizes:
+  - Name: Desktop
+    Value: 60352
+  Exists: 1
 --- !u!114 &-106043938949889686
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -107,7 +127,7 @@ MonoBehaviour:
   Path: event:/cardPlace1
   guid: 45fcb8636baf5644b307b8c520cdcff8
   Banks:
-  - {fileID: 9032570641646618640}
+  - {fileID: -1229090403119728758}
   IsStream: 0
   Is3D: 0
   IsOneShot: 1
@@ -128,8 +148,8 @@ MonoBehaviour:
   m_Name: FMODStudioCache
   m_EditorClassIdentifier: 
   EditorBanks:
-  - {fileID: 1487113968738638117}
-  - {fileID: 9032570641646618640}
+  - {fileID: 2019673105005387905}
+  - {fileID: -1229090403119728758}
   EditorEvents:
   - {fileID: -106043938949889686}
   - {fileID: -4654646078014926540}
@@ -139,10 +159,10 @@ MonoBehaviour:
   - {fileID: -1714324818703930359}
   EditorParameters: []
   MasterBanks:
-  - {fileID: 9032570641646618640}
+  - {fileID: -1229090403119728758}
   StringsBanks:
-  - {fileID: 1487113968738638117}
-  stringsBankWriteTime: 637049455949963321
+  - {fileID: 2019673105005387905}
+  stringsBankWriteTime: 637057427018491252
   cacheVersion: 3
 --- !u!114 &1487113968738638117
 MonoBehaviour:
@@ -157,8 +177,28 @@ MonoBehaviour:
   m_Name: bank:/Master.strings.bank
   m_EditorClassIdentifier: 
   Path: D:/UnityProjects/Cards_Project/Assets/Audio/FMOD/Euchre/Build/Desktop/Master.strings.bank
-  SubDir: 
+  SubDir: D:/UnityProjects/Cards_Project/Assets/Audio/FMOD/Euchre/Build/Desktop
   lastModified: 637049455949963321
+  LoadResult: 0
+  FileSizes:
+  - Name: Desktop
+    Value: 936
+  Exists: 0
+--- !u!114 &2019673105005387905
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
+  m_Name: bank:/Master.strings.bank
+  m_EditorClassIdentifier: 
+  Path: D:/UnityProjects/Genetic_Euchre/Assets/Audio/FMOD/Euchre/Build/Desktop/Master.strings.bank
+  SubDir: 
+  lastModified: 637057427018491252
   LoadResult: 0
   FileSizes:
   - Name: Desktop
@@ -179,7 +219,7 @@ MonoBehaviour:
   Path: event:/cardPlace2
   guid: 825a61096a4a2b4d9160fba2fb310d01
   Banks:
-  - {fileID: 9032570641646618640}
+  - {fileID: -1229090403119728758}
   IsStream: 0
   Is3D: 0
   IsOneShot: 1
@@ -206,4 +246,4 @@ MonoBehaviour:
   FileSizes:
   - Name: Desktop
     Value: 60352
-  Exists: 1
+  Exists: 0
