@@ -87,7 +87,7 @@ public static class CardInteractionHandlers {
 			card.StartCoroutine(GameManager.cardAnimator.FlyTo(card.goalPosition, card, GameManager.AnimateGame));
 		else
 			//Otherwise, shout into the void and hope someone is listening to fix this.
-			GameManager.cardAnimator.PostNotification("CardPlayedInZone", new object[] { zone, card });
+			GameManager.cardAnimator.PostNotification("CardPlayedInZone0", new object[] { zone, card });
 	}
 
 	public static void CardMouseClick(object sender, object args) {

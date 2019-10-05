@@ -58,7 +58,23 @@ public struct PointSpread  {
 		this.lonerThreshold = d[10];
 	}
 
+	public override string ToString() {
+		string ret = "";
+		ret += "RB:" + this.RightBower;
+		ret += " LB:" + this.LeftBower;
+		ret += " A:" + this.Ace;
+		ret += " K:" + this.King;
+		ret += " Q:" + this.Queen;
+		ret += " T:" + this.Ten;
+		ret += " N:" + this.Nine;
+		ret += " OA:" + this.OffSuitAce;
+		ret += " TS:" + this.TwoSuited;
+		ret += " CL:" + this.callThreshold;
+		ret += " LN:" + this.lonerThreshold;
+		return ret;
+	}
 
-	public static explicit operator int[](PointSpread d) =>  new int[] { d.RightBower, d.LeftBower, d.Ace, d.King, d.King, d.Queen, d.Ten, d.Nine, d.OffSuitAce, d.TwoSuited, d.callThreshold, d.lonerThreshold};
+
+	public static explicit operator int[](PointSpread d) =>  new int[] { d.RightBower, d.LeftBower, d.Ace, d.King, d.Queen, d.Ten, d.Nine, d.OffSuitAce, d.TwoSuited, d.callThreshold, d.lonerThreshold};
 
 }

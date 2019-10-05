@@ -8,7 +8,7 @@ public class GameManager : MonoBehaviour {
 	public static CardAnimationHandler cardAnimator => instance.cardAnimationHandler;
 	public static DeckAsset DeckAsset => instance._deckAsset;
 	public static LayerMasks Masks => instance._masks;
-	public static DynamicContainer Memory => instance._dynamicContainer;
+	//public static DynamicContainer Memory => instance._dynamicContainer;
 	public static Color OpponentColor => instance._opponentColor;
 	public static Color PlayerColor => instance._playerColor;
 	public static ScoreLinks Scoreboard => instance._scoreLinks;
@@ -18,14 +18,16 @@ public class GameManager : MonoBehaviour {
 	public static bool ScrewTheDealer => instance._screwDealer;
 	public static bool HumanPlayer => instance._humanPlayer;
 	public static bool PlayAudio => instance._playAudio;
+	public static bool RunGenetics => instance._runGenetics;
 	public static PointSpread DefaultPointSpread => instance.defaultPointSpread;
+	public static GeneticHandler GeneticHandler => instance.geneHandler;
 	#endregion
 
 
 	#region Private Members
 	private static GameManager instance = null;
 
-	private StateMachineSystem.StateMachine stateMachine;
+	private StateMachineSystem.StateMachine[] stateMachines;
 	#endregion
 
 	#region Serialized Members
@@ -39,6 +41,8 @@ public class GameManager : MonoBehaviour {
 	private bool _humanPlayer = true;
 	[SerializeField]
 	private bool _playAudio = false;
+	[SerializeField]
+	private bool _runGenetics = false;
 	[SerializeField]
 	private CardAnimationHandler cardAnimationHandler = null;
 
@@ -62,9 +66,9 @@ public class GameManager : MonoBehaviour {
 	[SerializeField]
 	private DeckAsset _deckAsset = null;
 
-	[SerializeField]
-	[HideInInspector]
-	private DynamicContainer _dynamicContainer = new DynamicContainer();
+	//[SerializeField]
+	//[HideInInspector]
+	//private DynamicContainer _dynamicContainer = new DynamicContainer();
 	#endregion
 
 	#region Spawned Objects
@@ -84,6 +88,10 @@ public class GameManager : MonoBehaviour {
 	private GameObject aloneSticker = null;
 	[SerializeField]
 	private PointSpread defaultPointSpread = default;
+	[SerializeField]
+	private GeneticHandler geneHandler = new GeneticHandler();
+	[SerializeField]
+	private int geneticGames = 10;
 	#endregion
 
 	#endregion
@@ -95,8 +103,14 @@ public class GameManager : MonoBehaviour {
 			Debug.Break();
 		}
 		instance = this;
-		stateMachine = new StateMachineSystem.StateMachine();
-		stateMachine.Transition<StateMachineSystem.EuchreStates.SetupGame>();
+		if (GameManager.RunGenetics == false)
+			geneticGames = 1;
+		stateMachines = new StateMachineSystem.StateMachine[geneticGames];
+		for (int i = 0; i < geneticGames; i++) {
+			stateMachines[i] = new StateMachineSystem.StateMachine();
+			stateMachines[i].UID = i;
+			stateMachines[i].Transition<StateMachineSystem.EuchreStates.SetupGame>();
+		}
 	}
 
 
@@ -154,7 +168,7 @@ public class GameManager : MonoBehaviour {
 	/// <param name="playerID"></param>
 	/// <param name="type"></param>
 	/// <returns></returns>
-	public static GameObject SpawnAIText(int playerID, int type) {
+	public static GameObject SpawnAIText(int playerID, int type, StateMachineSystem.StateMachine targetMachine) {
 		GameObject spawnedOject;
 		if (type == 1)
 			spawnedOject = Instantiate(instance.passSticker);
@@ -163,7 +177,7 @@ public class GameManager : MonoBehaviour {
 		else
 			spawnedOject = Instantiate(instance.aloneSticker);
 
-		spawnedOject.transform.position = Vector3.Lerp(Vector3.zero, GameManager.Memory.GetData<Player>("Player"+playerID).gameObject.transform.position,0.5f);
+		spawnedOject.transform.position = Vector3.Lerp(Vector3.zero, targetMachine.Memory.GetData<Player>("Player"+playerID).gameObject.transform.position,0.5f);
 		if (type == 3)
 			spawnedOject.transform.position += Vector3.down * 0.65f;
 

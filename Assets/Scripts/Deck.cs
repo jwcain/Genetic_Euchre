@@ -44,9 +44,9 @@ public class Deck : IEnumerable {
 	/// </summary>
 	/// <param name="playerNameOrNull"></param>
 	/// <returns></returns>
-	public IEnumerator Orient(string playerNameOrNull) {
+	public IEnumerator Orient(string playerNameOrNull, StateMachineSystem.StateMachine targetMachine) {
 		foreach (Card card in cards) {
-			card.StartCoroutine(GameManager.cardAnimator.Orient(card, playerNameOrNull, GameManager.AnimateGame));
+			card.StartCoroutine(GameManager.cardAnimator.Orient(card, playerNameOrNull, GameManager.AnimateGame, targetMachine));
 			card.StartCoroutine(GameManager.cardAnimator.FlyTo(basePosition, card, GameManager.AnimateGame));
 		}
 		//Wait for all the cards to finish animating
@@ -87,7 +87,7 @@ public class Deck : IEnumerable {
 	/// More aggressive form of orientation, this is effectively a full reset on cards within the deck.
 	/// </summary>
 	/// <param name="animated"></param>
-	public void EnforceCardLocationAndOrientation(bool animated) {
+	public void EnforceCardLocationAndOrientation(bool animated, StateMachineSystem.StateMachine targetMachine) {
 		basePosition.z = 0;
 		AssertOrdering();
 		if (animated)
@@ -95,13 +95,24 @@ public class Deck : IEnumerable {
 				cards[i].StartCoroutine(GameManager.cardAnimator.FlyTo(basePosition, cards[i], GameManager.AnimateGame));
 				if (cards[i].faceDown == false)
 					cards[i].StartCoroutine(GameManager.cardAnimator.Flip(cards[i], GameManager.AnimateGame));
-				cards[i].StartCoroutine(GameManager.cardAnimator.Orient(cards[i], null, GameManager.AnimateGame));
+				cards[i].StartCoroutine(GameManager.cardAnimator.Orient(cards[i], null, GameManager.AnimateGame, targetMachine));
 			}
 		else
 			for (int i = 0; i < cards.Count; i++) {
 				cards[i].transform.position = basePosition;
 				cards[i].transform.rotation = Quaternion.Euler(0.0f, cards[i].transform.rotation.eulerAngles.y, 0.0f);
 			}
+	}
+	
+	/// <summary>
+	/// Destorys all cards in the deck and deletes any internal data
+	/// </summary>
+	public void Destroy() {
+		while (cards.Count > 0) {
+			Card t = cards[0];
+			cards.RemoveAt(0);
+			GameObject.Destroy(t.gameObject);
+		}
 	}
 
 	/// <summary>

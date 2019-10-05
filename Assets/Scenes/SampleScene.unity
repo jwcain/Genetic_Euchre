@@ -673,13 +673,13 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 207674191}
-    characterCount: 1
+    characterCount: 0
     spriteCount: 0
     spaceCount: 0
-    wordCount: 1
+    wordCount: 0
     linkCount: 0
-    lineCount: 1
-    pageCount: 1
+    lineCount: 0
+    pageCount: 0
     materialCount: 1
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
@@ -2532,11 +2532,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29a9eff7d97e1df4cb5097215a9fd2b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _animateGame: 1
+  _animateGame: 0
   _showAllCards: 1
   _screwDealer: 0
   _humanPlayer: 0
   _playAudio: 0
+  _runGenetics: 1
   cardAnimationHandler: {fileID: 1537317223}
   cardHolder: {fileID: 1951404300}
   trumpSelectorUI: {fileID: 242807574}
@@ -2578,6 +2579,7 @@ MonoBehaviour:
     TwoSuited: 1
     callThreshold: 8
     lonerThreshold: 10
+  geneticGames: 100
 --- !u!114 &1537317225
 MonoBehaviour:
   m_ObjectHideFlags: 0

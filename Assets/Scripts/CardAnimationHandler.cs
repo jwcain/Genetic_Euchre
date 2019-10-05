@@ -12,11 +12,12 @@ public class CardAnimationHandler : MonoBehaviour {
 	/// <returns></returns>
 	public IEnumerator FlyTo(Vector3 pos, Card target, bool animated, bool audio = false) {
 		pos.z = 0;
-		while (target.animating)
-			yield return null;
+		if (GameManager.AnimateGame)
+			while (target.animating)
+				yield return null;
 		target.animating = true;
 
-		if (animated) {
+		if (animated && GameManager.AnimateGame) {
 			float speed = 0.35f;
 			while ((target.transform.position - pos).magnitude > 0.05f) {
 				Vector3 dir = (pos - target.transform.position);
@@ -24,7 +25,7 @@ public class CardAnimationHandler : MonoBehaviour {
 					dir = dir.normalized * speed;
 
 				target.transform.position += dir;
-				yield return null;
+					yield return null;
 			}
 		}
 
@@ -32,7 +33,8 @@ public class CardAnimationHandler : MonoBehaviour {
 			FMODUnity.RuntimeManager.PlayOneShot("event:/cardPlace" + Random.Range(1, 4), target.transform.position);
 
 		target.transform.position = pos;
-		yield return null;
+		if (GameManager.AnimateGame)
+			yield return null;
 		target.animating = false;
 	}
 
@@ -43,16 +45,16 @@ public class CardAnimationHandler : MonoBehaviour {
 	/// <param name="deckName"></param>
 	/// <param name="amt"></param>
 	/// <returns></returns>
-	public IEnumerator Deal(string playerName, string deckName, int amt, bool animated) {
+	public IEnumerator Deal(string playerName, string deckName, int amt, bool animated, StateMachineSystem.StateMachine targetMachine) {
 		if (amt == 0)
 			yield break;
 
-		Card[] drawn = GameManager.Memory.GetData<Deck>(deckName).Draw(amt);
-		Player p = GameManager.Memory.GetData<Player>(playerName);
+		Card[] drawn = targetMachine.Memory.GetData<Deck>(deckName).Draw(amt);
+		Player p = targetMachine.Memory.GetData<Player>(playerName);
 		
 		for (int i = 0; i < drawn.Length; i++) {
 			Card card = drawn[i];
-			StartCoroutine(Orient(card, p.gameObject.name, animated));
+			StartCoroutine(Orient(card, p.gameObject.name, animated, targetMachine));
 
 			card.gameObject.transform.rotation = Quaternion.Euler(0.0f, 180.0f, p.gameObject.transform.rotation.eulerAngles.z + 90.0f);
 			p.AddCard(card);
@@ -63,15 +65,16 @@ public class CardAnimationHandler : MonoBehaviour {
 			if (p.isHuman || GameManager.ShowAllCards)
 				StartCoroutine(Flip(drawn[i], animated));
 		}
-		foreach (Card c in drawn) {
-			while (c.animating)
-				yield return null;
-		}
+		if (GameManager.AnimateGame)
+			foreach (Card c in drawn) 
+				while (c.animating)
+					yield return null;
+		
 		if (GameManager.PlayAudio)
 			FMODUnity.RuntimeManager.PlayOneShot("event:/cardSlide" + Random.Range(1,4), drawn[0].transform.position);
 
 		//This handles cards moving to the player's hand from the deck as well
-		yield return AdjustHand(playerName, animated);
+		yield return AdjustHand(playerName, animated, targetMachine);
 	}
 
 	/// <summary>
@@ -80,15 +83,16 @@ public class CardAnimationHandler : MonoBehaviour {
 	/// <param name="target"></param>
 	/// <param name="playerName"></param>
 	/// <returns></returns>
-	public IEnumerator Orient(Card target, string playerName, bool animated) {
-		while (target.animating)
-			yield return null;
+	public IEnumerator Orient(Card target, string playerName, bool animated, StateMachineSystem.StateMachine targetMachine) {
+		if (GameManager.AnimateGame)
+			while (target.animating)
+				yield return null;
 		target.animating = true;
 
-		float orientation = (string.IsNullOrEmpty(playerName)) ? 0.0f : GameManager.Memory.GetData<Player>(playerName).gameObject.transform.eulerAngles.z + 90.0f;
+		float orientation = (string.IsNullOrEmpty(playerName)) ? 0.0f : targetMachine.Memory.GetData<Player>(playerName).gameObject.transform.eulerAngles.z + 90.0f;
 		Quaternion goalRot = Quaternion.Euler(0.0f, target.transform.eulerAngles.y, orientation);
 
-		if (animated) { 
+		if (animated && GameManager.AnimateGame) { 
 			while ((goalRot.eulerAngles - target.transform.rotation.eulerAngles).magnitude > 0.1f) {
 				target.transform.rotation = Quaternion.Lerp(target.transform.rotation, goalRot, 0.4f);
 				yield return null;
@@ -107,8 +111,8 @@ public class CardAnimationHandler : MonoBehaviour {
 	/// </summary>
 	/// <param name="playerName"></param>
 	/// <returns></returns>
-	public IEnumerator AdjustHand(string playerName, bool animated) {
-		Player p = GameManager.Memory.GetData<Player>(playerName);
+	public IEnumerator AdjustHand(string playerName, bool animated, StateMachineSystem.StateMachine targetMachine) {
+		Player p = targetMachine.Memory.GetData<Player>(playerName);
 		p.AssertHandSpriteOrdering();
 		Vector3[] pos = GetCardPlacementOffsets(p.gameObject, p.GetHand().Count);
 
@@ -119,10 +123,11 @@ public class CardAnimationHandler : MonoBehaviour {
 		}
 
 		//Wait for all sub animations to finish
-		for (int i = 0; i < p.GetHand().Count; i++) {
-			while (p.GetHand()[i].animating)
-				yield return null;
-		}
+		if (GameManager.AnimateGame)
+			for (int i = 0; i < p.GetHand().Count; i++) 
+				while (p.GetHand()[i].animating)
+					yield return null;
+			
 	}
 
 	/// <summary>
@@ -131,13 +136,13 @@ public class CardAnimationHandler : MonoBehaviour {
 	/// <param name="target"></param>
 	/// <returns></returns>
 	public IEnumerator Flip(Card target, bool animated) {
-
-		while (target.animating)
-			yield return null;
+		if (GameManager.AnimateGame)
+			while (target.animating)
+				yield return null;
 
 		target.animating = true;
 		Quaternion originalRotation = target.transform.rotation;
-		if (animated) {
+		if (animated && GameManager.AnimateGame) {
 			float step = 10;
 			for (float i = 0.0f; i < 180.0f; i += step) {
 				target.transform.Rotate(0.0f, step, 0.0f);
@@ -148,7 +153,8 @@ public class CardAnimationHandler : MonoBehaviour {
 			target.transform.rotation = Quaternion.Euler(originalRotation.eulerAngles.x, originalRotation.eulerAngles.y + 180.0f, originalRotation.eulerAngles.z);
 
 		target.faceDown = !target.faceDown;
-		yield return null;
+		if (GameManager.AnimateGame)
+			yield return null;
 		target.animating = false;
 	}
 

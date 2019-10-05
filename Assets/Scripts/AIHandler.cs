@@ -5,9 +5,12 @@ using System.Linq;
 using Hand = System.Collections.Generic.List<Card>;
 public class AIHandler {
 
-	public static int  ScoreingValue(Card c) {
-		Card.Suit trump = GameManager.Memory.GetData<Card.Suit>("Trump");
-		Card lead = GameManager.Memory.GetData<List<Card>>("Plays")[0];
+
+	private const bool debugLog = false;
+
+	public static int  ScoreingValue(Card c, StateMachineSystem.StateMachine targetMachine) {
+		Card.Suit trump = targetMachine.Memory.GetData<Card.Suit>("Trump");
+		Card lead = targetMachine.Memory.GetData<List<Card>>("Plays")[0];
 		//Intial value is as printed on the card
 		int val = (int)c.value;
 		//If on suit, add value
@@ -62,9 +65,9 @@ public class AIHandler {
 		return value;
 	}
 
-	public static bool isValidPlay(Card c, Player p) {
-		Card.Suit trump = GameManager.Memory.GetData<Card.Suit>("Trump");
-		List<Card> plays = GameManager.Memory.GetData<List<Card>>("Plays");
+	public static bool isValidPlay(Card c, Player p, StateMachineSystem.StateMachine targetMachine) {
+		Card.Suit trump = targetMachine.Memory.GetData<Card.Suit>("Trump");
+		List<Card> plays = targetMachine.Memory.GetData<List<Card>>("Plays");
 
 		if (plays.Count > 0) {
 			bool hasLeadSuitInHand = false;
@@ -130,13 +133,13 @@ public class AIHandler {
 		return ret;
 	}
 
-	public static IEnumerator MakeTrumpOrderingDecision(int playerID, PointSpread pointSpread) {
+	public static IEnumerator MakeTrumpOrderingDecision(int playerID, PointSpread pointSpread, StateMachineSystem.StateMachine targetMachine) {
 		//Default to passing
 		bool pass = true;
-		Player player = GameManager.Memory.GetData<Player>("Player"+playerID);
-		Card revealedCard = GameManager.Memory.GetData<Card>("RevealedCardFromKittie");
+		Player player = targetMachine.Memory.GetData<Player>("Player"+playerID);
+		Card revealedCard = targetMachine.Memory.GetData<Card>("RevealedCardFromKittie");
 		Card.Suit? callSuit = (revealedCard.faceDown) ? null : (Card.Suit?)revealedCard.suit;
-		int dealerID = GameManager.Memory.GetData<int>("Dealer");
+		int dealerID = targetMachine.Memory.GetData<int>("Dealer");
 		bool dealerOnTeam = (dealerID % 2) == (playerID % 2);
 		//Debug.Log("Player" + playerID+" team w/ Dealer: " + dealerOnTeam);
 
@@ -144,15 +147,15 @@ public class AIHandler {
 		if (callSuit != null) {
 			//Handle deciding on just this card
 			int points = CalculateHandPoints(player.GetHand(), revealedCard, (Card.Suit)callSuit, dealerOnTeam, pointSpread);
-			Debug.Log("Player" + playerID + " Points: " + points);
+			//Debug.Log("Player" + playerID + " Points: " + points);
 			if (points >= pointSpread.callThreshold)
 				pass = false;
 			//Debug.Log("Player" + playerID + ": " + points + " for " + ((Card.Suit)callSuit).Shortname());
 			//Call a loner if we are confident in our hand, unless we have more than seven points
-			if (points >= pointSpread.lonerThreshold && GameManager.Memory.GetData<int>("Team"+ (playerID % 2) + "Points") <= 7) {
+			if (points >= pointSpread.lonerThreshold && targetMachine.Memory.GetData<int>("Team"+ (playerID % 2) + "Points") <= 7) {
 				//If we are the dealer, calling loner is fine. If we are not the dealer, and it is the right bower, don't go alone.
 				if (dealerID == playerID || revealedCard.value != Card.Value.Jack)
-					GameManager.Memory.GetData<TrumpSelector>("TrumpSelector").aloneToggle.isOn = true;
+					targetMachine.Memory.GetData<TrumpSelector>("TrumpSelector").aloneToggle.isOn = true;
 			}
 
 		}
@@ -175,8 +178,8 @@ public class AIHandler {
 				pass = false;
 
 			//If this is a strong call, go alone
-			if (maxPoints >= 9 && GameManager.Memory.GetData<int>("Team" + (playerID % 2) + "Points") <= 7)
-				GameManager.Memory.GetData<TrumpSelector>("TrumpSelector").aloneToggle.isOn = true;
+			if (maxPoints >= 9 && targetMachine.Memory.GetData<int>("Team" + (playerID % 2) + "Points") <= 7)
+				targetMachine.Memory.GetData<TrumpSelector>("TrumpSelector").aloneToggle.isOn = true;
 
 				//Debug.Log("Player" + playerID + ": " + maxPoints + " for " + ((Card.Suit)callSuit).Shortname());
 			}
@@ -184,17 +187,17 @@ public class AIHandler {
 		yield return null;
 
 		if (pass)
-			player.PostNotification("Pass");
+			player.PostNotification("Pass" + targetMachine.UID);
 		else
-			player.PostNotification("OrderUp", (Card.Suit)callSuit);
+			player.PostNotification("OrderUp" + targetMachine.UID, (Card.Suit)callSuit);
 	}
 
 
-	public static IEnumerator MakeTrumpDiscardDecision(int playerID, PointSpread pointSpread) {
+	public static IEnumerator MakeTrumpDiscardDecision(int playerID, PointSpread pointSpread, StateMachineSystem.StateMachine targetMachine) {
 		//Discard the lowest value card or a card that makes the hand two suited (aside from a trump)
 		yield return null;
-		Player p = GameManager.Memory.GetData<Player>("Player" + playerID);
-		Card.Suit trump = GameManager.Memory.GetData<Card.Suit>("Trump");
+		Player p = targetMachine.Memory.GetData<Player>("Player" + playerID);
+		Card.Suit trump = targetMachine.Memory.GetData<Card.Suit>("Trump");
 		Card discard = null;
 		Hand cardsRemaining = CloneListOfCards(p.GetHand());
 
@@ -264,23 +267,23 @@ public class AIHandler {
 		if (discard == null)
 			discard = cardsRemaining[0];
 
-		p.PostNotification("CardPlayedInZone", new object[] { GameObject.FindGameObjectWithTag(GameManager.Tags.PlayZone), discard });
+		p.PostNotification("CardPlayedInZone" + targetMachine.UID, new object[] { GameObject.FindGameObjectWithTag(GameManager.Tags.PlayZone), discard });
 	}
 
 
-	public static IEnumerator MakePlayDecision(int playerID, PointSpread pointSpread) {
-		int trumpCaller = GameManager.Memory.GetData<int>("TrumpCaller");
-		Player player = GameManager.Memory.GetData<Player>("Player"+ playerID);
-		Card.Suit trump = GameManager.Memory.GetData<Card.Suit>("Trump");
+	public static IEnumerator MakePlayDecision(int playerID, PointSpread pointSpread, StateMachineSystem.StateMachine targetMachine) {
+		int trumpCaller = targetMachine.Memory.GetData<int>("TrumpCaller");
+		Player player = targetMachine.Memory.GetData<Player>("Player"+ playerID);
+		Card.Suit trump = targetMachine.Memory.GetData<Card.Suit>("Trump");
 		yield return null;
 		Hand handViewframe = CloneListOfCards(player.GetHand());
 		//Remove all legal plays
-		handViewframe.RemoveAll((Card c) => { return !isValidPlay(c, player); });
+		handViewframe.RemoveAll((Card c) => { return !isValidPlay(c, player, targetMachine); });
 		Card playCard = null;
-		List<Card> plays = GameManager.Memory.GetData<List<Card>>("Plays");
+		List<Card> plays = targetMachine.Memory.GetData<List<Card>>("Plays");
 		//Calculate this player's team is winning
 
-		Debug.LogWarning("Player" + playerID);
+		//Debug.LogWarning("Player" + playerID);
 
 
 
@@ -310,7 +313,7 @@ public class AIHandler {
 			//If we have 3+ trump in hand, lead with our strongest trump
 			if (playCard == null) {
 				if (trumpHand.Count >= 3) {
-					Debug.Log("Leading Strong Trump");
+					//Debug.Log("Leading Strong Trump");
 					playCard = trumpHand[trumpHand.Count - 1];
 				}
 			}
@@ -320,7 +323,7 @@ public class AIHandler {
 				foreach (Card.Suit item in singletonSuits.Keys) {
 					foreach (Card card in player.GetHand()) {
 						if (card.suit == item && card.value == Card.Value.Ace) {
-							Debug.Log("Leading offsuit Ace");
+							//Debug.Log("Leading offsuit Ace");
 							playCard = card;
 							break;
 						}
@@ -333,8 +336,7 @@ public class AIHandler {
 			//If we have the right bower, play that if its our only trump
 			if (playCard == null && trumpHand.Count == 1) {
 				playCard = handViewframe.Find((Card c) => { return c.suit == trump && c.value == Card.Value.Jack; });
-				if (playCard != null)
-					Debug.Log("Leading Singleton Right Bower");
+				//if (playCard != null) Debug.Log("Leading Singleton Right Bower");
 			}
 
 			//If we have a singleton card, play that.
@@ -342,7 +344,7 @@ public class AIHandler {
 				foreach (Card.Suit item in singletonSuits.Keys) {
 					foreach (Card card in player.GetHand()) {
 						if (card.suit == item) {
-							Debug.Log("Leading Singleton");
+							//Debug.Log("Leading Singleton");
 							playCard = card;
 							break;
 						}
@@ -354,7 +356,7 @@ public class AIHandler {
 
 			//Play our lowest value card.
 			if (playCard == null) {
-				Debug.Log("Leading Lowest Card");
+				//Debug.Log("Leading Lowest Card");
 				handViewframe.Sort((Card x, Card y) => { return (CardValue(x, trump, pointSpread) < CardValue(y, trump, pointSpread)) ? -1 : 1; });
 				playCard = handViewframe[0];
 			}
@@ -364,7 +366,7 @@ public class AIHandler {
 				playCard = handViewframe[Random.Range(0, handViewframe.Count)];
 		}
 		else if (handViewframe.Count == 1) {
-			Debug.Log("Only one valid play");
+			//Debug.Log("Only one valid play");
 			//If there is only one card, play it
 			playCard = handViewframe[0];
 		}
@@ -373,7 +375,7 @@ public class AIHandler {
 			
 			List<Card> sortedPlays = CloneListOfCards(plays);
 			sortedPlays.Sort((Card x, Card y) => {
-				if (ScoreingValue(x) < ScoreingValue(y))
+				if (ScoreingValue(x, targetMachine) < ScoreingValue(y, targetMachine))
 					return -1;
 				else
 					return 1;
@@ -385,15 +387,15 @@ public class AIHandler {
 				foreach (Card item in sortedPlays) {
 					ret += item.Shortname() + ", ";
 				}
-				Debug.Log(ret);
+				//Debug.Log(ret);
 			}
-			int currentWinner = GameManager.Memory.GetData<Dictionary<Card, int>>("PlaysMap")[sortedPlays[0]];
+			int currentWinner = targetMachine.Memory.GetData<Dictionary<Card, int>>("PlaysMap")[sortedPlays[0]];
 			teamWinningHand = currentWinner % 2 == playerID % 2;
 			
 
 			System.Func<Card, bool> isWinningPlay = (Card c) => {
 				Card winningCard = sortedPlays[0];
-				if (ScoreingValue(c) > ScoreingValue(winningCard))
+				if (ScoreingValue(c, targetMachine) > ScoreingValue(winningCard, targetMachine))
 					return true;
 				else
 					return false;
@@ -419,24 +421,24 @@ public class AIHandler {
 				ret += "\nWinners:";
 				foreach (Card card in winningPlays)
 					ret += card.Shortname() + ", ";
-				Debug.Log(ret);
+				//Debug.Log(ret);
 			}
 
 			//If we have no winning plays, or we are already winning
 			if ((winningPlays.Count == 0 || teamWinningHand) && losingPlays.Count > 0) {
-				Debug.Log("Playing worst card:(" + (winningPlays.Count == 0) + " || " + teamWinningHand + ") && " + (losingPlays.Count > 0) );
+				//Debug.Log("Playing worst card:(" + (winningPlays.Count == 0) + " || " + teamWinningHand + ") && " + (losingPlays.Count > 0) );
 				//Play the lowest value losing play
 				playCard = losingPlays[0];
 			}
 			//If we have no losing plays, or we are not winning
 			else if ((losingPlays.Count == 0 || teamWinningHand == false) && winningPlays.Count > 0) {
-				Debug.Log("Playing best card:(" + (losingPlays.Count == 0) + " || " + (teamWinningHand == false) + ") && " + (winningPlays.Count > 0));
+				//Debug.Log("Playing best card:(" + (losingPlays.Count == 0) + " || " + (teamWinningHand == false) + ") && " + (winningPlays.Count > 0));
 				//Play the lowest value winning play
 				playCard = winningPlays[0];
 			}
 		}
 
 		//do { playCard = player.GetHand()[Random.Range(0, player.GetHand().Count)]; } while (isValidPlay(playCard, player) == false);
-		player.PostNotification("CardPlayedInZone", new object[] { GameObject.FindGameObjectWithTag(GameManager.Tags.PlayZone), playCard });
+		player.PostNotification("CardPlayedInZone" + targetMachine.UID, new object[] { GameObject.FindGameObjectWithTag(GameManager.Tags.PlayZone), playCard });
 	}
 }

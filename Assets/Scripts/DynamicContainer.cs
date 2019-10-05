@@ -74,6 +74,19 @@ public class DynamicContainer {
 			return false;
 	}
 
+	public override string ToString() {
+		string toPrint = "";
+		foreach (System.Type type in internalData.Keys) {
+			toPrint += type.ToString() + ":";
+			foreach (string name in internalData[type].Keys) {
+				toPrint += "("+name + "), ";
+			}
+			toPrint += "\n";
+		}
+
+		return toPrint;
+	}
+
 	public void Reset() {
 		internalData = new Dictionary<System.Type, Dictionary<string, object>>();
 	}
