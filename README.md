@@ -4,7 +4,7 @@ A human playable euchre game where the AI has been augmented using a genetic alg
 
 ## Summary
 
-This project had two goals. One, to produce a human-playable euchre game with AI players. Second, to develop a system that allowed me to modify the bidding (or, trump declaration) strategy using a genetic algorithm. You can follow this link to (a web-hosted version of my game)[https://jwcain.github.io/Euchre_Play/] (while the game has been reported to work on mobile, it has not been developed for mobile and may have some unknown behaviour).
+This project had two goals. One, to produce a human-playable euchre game with AI players. Second, to develop a system that allowed me to modify the bidding (or, trump declaration) strategy using a genetic algorithm. You can follow this link to [a web-hosted version of my game](https://jwcain.github.io/Euchre_Play/) (while the game has been reported to work on mobile, it has not been developed for mobile and may have some unknown behaviour).
 
 The project was developed in C# on the Unity3D engine. The game code is broken down into the following categories, with various helper code omitted:
 -State Machine
