@@ -1,5 +1,6 @@
 # Genetic Euchre
-- [Play Now](https://jwcain.github.io/Euchre_Play/)
+[Play Now](https://jwcain.github.io/Euchre_Play/)
+
 ![Genetic Euchre Screenshot](/EuchreCapture.PNG)
 
 
