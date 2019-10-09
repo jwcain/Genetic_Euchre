@@ -1,8 +1,11 @@
 # Genetic Euchre
-[Play Now](https://jwcain.github.io/Euchre_Play/)
-
 ![Genetic Euchre Screenshot](/EuchreCapture.PNG)
-
+##[Play Now](https://jwcain.github.io/Euchre_Play/)
+## Author
+- Justin W. Cain 
+- @AffinityForFun
+- jwcain@mtu.edu
+- [Portfolio](https://jwcain.github.io/Portfolio/)
 
 A human playable euchre game where the AI has been augmented using a genetic algorithm. You can read a more [Detailed Development Report](https://docs.google.com/document/d/1MAJRUl7Eo8Jm62nuJoKyQ0patQ5Oqda2RF0S1OCGQQM/edit?usp=sharing) at that link or there is a summary below. 
 
