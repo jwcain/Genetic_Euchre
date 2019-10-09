@@ -1,6 +1,6 @@
 # Genetic Euchre
 ![Genetic Euchre Screenshot](/EuchreCapture.PNG)
-##[Play Now](https://jwcain.github.io/Euchre_Play/)
+## [Play Now](https://jwcain.github.io/Euchre_Play/)
 ## Author
 - Justin W. Cain 
 - @AffinityForFun
