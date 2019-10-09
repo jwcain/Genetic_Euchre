@@ -9,7 +9,7 @@ namespace StateMachineSystem.EuchreStates {
 			yield return base.Enter();
 
 			//Reset GameManager's Memory
-			owner.Memory.Reset();
+			//owner.Memory.Reset();
 
 			owner.Memory.SetData<float>("StartTime", Time.time);
 
@@ -27,13 +27,15 @@ namespace StateMachineSystem.EuchreStates {
 			//Get hand positions for 4 players
 			Vector3[] positions = GameManager.GetHandLocations(4);
 
-			//Spawn player objects and add them to memory
-			for (int i = 0; i < 4; i++) {
-				Player p = GameManager.SpawnPlayerPrefab();
-				p.gameObject.name = "Player" + i;
-				owner.Memory.SetData("Player" + i, p);
-				p.gameObject.transform.position = new Vector3(positions[3 - i].x, positions[3 - i].y, 10.0f);
-				p.gameObject.transform.rotation = Quaternion.Euler(0.0f, 0.0f, positions[3 - i].z);
+			if (owner.Memory.HasKey<Player>("Player0") == false) {
+				//Spawn player objects and add them to memory
+				for (int i = 0; i < 4; i++) {
+					Player p = GameManager.SpawnPlayerPrefab();
+					p.gameObject.name = "Player" + i;
+					owner.Memory.SetData("Player" + i, p);
+					p.gameObject.transform.position = new Vector3(positions[3 - i].x, positions[3 - i].y, 10.0f);
+					p.gameObject.transform.rotation = Quaternion.Euler(0.0f, 0.0f, positions[3 - i].z);
+				}
 			}
 
 			//Set the first player as a human
@@ -44,20 +46,6 @@ namespace StateMachineSystem.EuchreStates {
 			owner.Memory.SetData("Team0Score", 0);
 			owner.Memory.SetData("Team1Score", 0);
 
-			PointSpread testingPointSpread;
-			if (GameManager.RunGenetics) {
-				int[] array = null;
-				yield return GameManager.GeneticHandler.GetSpread((int[] inn) => { array = inn; });
-				testingPointSpread = new PointSpread(array);
-			}
-			else {
-				testingPointSpread = GameManager.DefaultPointSpread;
-			}
-			//if (GameManager.RunGenetics) Debug.LogWarning("Trial of: " + testingPointSpread);
-			owner.Memory.SetData("Player0PointSpread", testingPointSpread);
-			owner.Memory.SetData("Player1PointSpread", GameManager.DefaultPointSpread);
-			owner.Memory.SetData("Player2PointSpread", testingPointSpread);
-			owner.Memory.SetData("Player3PointSpread", GameManager.DefaultPointSpread);
 
 			//Setup holders for trick indicators
 			owner.Memory.SetData("Player0TrickIndicators", new List<GameObject>());
@@ -106,6 +94,22 @@ namespace StateMachineSystem.EuchreStates {
 			owner.Memory.SetData("Player1Tricks", 0);
 			owner.Memory.SetData("Player2Tricks", 0);
 			owner.Memory.SetData("Player3Tricks", 0);
+
+			PointSpread testingPointSpread;
+			if (GameManager.RunGenetics) {
+				int[] array = null;
+				yield return GameManager.GeneticHandler.GetSpread((int[] inn) => { array = inn; });
+				testingPointSpread = new PointSpread(array);
+			}
+			else {
+				testingPointSpread = GameManager.DefaultPointSpread;
+			}
+			//if (GameManager.RunGenetics) Debug.LogWarning("Trial of: " + testingPointSpread);
+			owner.Memory.SetData("Player0PointSpread", testingPointSpread);
+			owner.Memory.SetData("Player1PointSpread", GameManager.DefaultPointSpread);
+			owner.Memory.SetData("Player2PointSpread", testingPointSpread);
+			owner.Memory.SetData("Player3PointSpread", GameManager.DefaultPointSpread);
+
 
 
 			owner.Memory.GetData<TrumpSelector>("TrumpSelector").aloneToggle.isOn = false;
@@ -212,6 +216,11 @@ namespace StateMachineSystem.EuchreStates {
 						p.ResetHand();
 					}
 					deck.EnforceCardLocationAndOrientation(true, owner);
+
+
+					if (GameManager.RunGenetics)
+						//Log the results of this run. (If someone on our team won this trick)
+						revealedCard.StartCoroutine(GameManager.GeneticHandler.Log((int[])owner.Memory.GetData<PointSpread>("Player0PointSpread"), null));
 
 					//Go back to setup
 					owner.Transition<SetupHand>();
@@ -788,7 +797,14 @@ namespace StateMachineSystem.EuchreStates {
 				}
 			}
 
-			if (owner.Memory.GetData<int>("Team0Score") >= 10 || owner.Memory.GetData<int>("Team1Score") >= 10)
+			//Override game scores if we are running genetics so the game never ends
+			if (GameManager.RunGenetics == false) {
+				owner.Memory.SetData("Team0Score", 0);
+				owner.Memory.SetData("Team1Score", 0);
+			}
+
+			//Check if a team has won, if so end the game.
+			if ((owner.Memory.GetData<int>("Team0Score") >= 10 || owner.Memory.GetData<int>("Team1Score") >= 10))
 				owner.Transition<EndGame>();
 			else
 				owner.Transition<SetupHand>();
@@ -804,10 +820,11 @@ namespace StateMachineSystem.EuchreStates {
 
 			int winningTeamID = owner.Memory.GetData<int>("Team0Score") >= 10 ? 0 : 1;
 			
+			/*
 			for (int i = 0; i < 4; i++) {
 				//Destroy the player object
 				GameObject.Destroy(owner.Memory.GetData<Player>("Player"+i).gameObject);
-			}
+			}*/
 			/*
 			float timeSpent = Time.time - owner.Memory.GetData<float>("StartTime");
 			Debug.Log("Game Time: " + timeSpent);
@@ -820,7 +837,7 @@ namespace StateMachineSystem.EuchreStates {
 			*/
 			owner.timeSpent = new Dictionary<System.Type, float>();
 			//Reset the GameManager's Game Memory
-			owner.Memory.Reset();
+			//owner.Memory.Reset();
 			//Debug.Log("\n");
 			//Start a new game.
 			owner.Transition<SetupGame>();
