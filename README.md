@@ -19,7 +19,7 @@ The AI Handler is simplistic in design, it is a static class with methods that t
 -What card to play during the Play round.
 -Whether or not to call trump.
 -What card to discard as the dealer.
-For more information on these processes, please read the [Detailed Development Report](https://docs.google.com/document/d/1MAJRUl7Eo8Jm62nuJoKyQ0patQ5Oqda2RF0S1OCGQQM/edit?usp=sharing
+For more information on these processes, please read the [Detailed Development Report](https://docs.google.com/document/d/1MAJRUl7Eo8Jm62nuJoKyQ0patQ5Oqda2RF0S1OCGQQM/edit?usp=sharing)
 
 ## Genetic Algorithm
 
